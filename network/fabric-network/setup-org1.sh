@@ -10,7 +10,7 @@ function createOrgs() {
   fi
 
   # Create crypto material using cryptogen
-  if [ "$CRYPTO" == "cryptogen" ]; then
+  # if [ "$CRYPTO" == "cryptogen" ]; then
     which cryptogen
     if [ "$?" -ne 0 ]; then
       fatalln "cryptogen tool not found. exiting"
@@ -27,7 +27,7 @@ function createOrgs() {
       fatalln "Failed to generate certificates..."
     fi
 
-  fi
+  # fi
 
   # infoln "Generating CCP files for Org1"
   # ./organizations/ccp-generate.sh

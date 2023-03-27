@@ -23,15 +23,42 @@ function createConsortium() {
   fi
 }
 
+function networkUp() {
+  # checkPrereqs
+  # generate artifacts if they don't exist
+  # if [ ! -d "organizations/peerOrganizations" ]; then
+  #   createOrgs
+  #   createConsortium
+  # fi
+
+  COMPOSE_FILES="-f ${COMPOSE_FILE_BASE}"
+
+  if [ "${DATABASE}" == "couchdb" ]; then
+    COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_COUCH}"
+  fi
+
+  IMAGE_TAG=$IMAGETAG docker-compose ${COMPOSE_FILES} up -d 2>&1
+
+  docker ps -a
+  if [ $? -ne 0 ]; then
+    fatalln "Unable to start network"
+  fi
+}
+
 # call the script to create the channel, join the peers of org1 and org2,
 # and then update the anchor peers for each organization
 function createChannel() {
   # Bring up the network if it is not already up.
 
-  if [ ! -d "organizations/peerOrganizations" ]; then
-    infoln "Bringing up network"
-    networkUp
-  fi
+  createConsortium
+
+  networkUp
+
+
+  # if [ ! -d "organizations/peerOrganizations" ]; then
+  #   infoln "Bringing up network"
+  #   networkUp
+  # fi
 
   # now run the script that creates a channel. This script uses configtxgen once
   # more to create the channel creation transaction and the anchor peer updates.
